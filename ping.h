@@ -22,15 +22,13 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/ip_icmp.h>
+#include "hosts.h"
 
 
 // #include "util/linkedlist.h"
+//
 
 #define MAX_EVENTS 1024
-
-struct listener_config {
-	int pid;
-};
 
 struct _host
 {
@@ -52,6 +50,7 @@ unsigned short checksum(void *b, int len);
 void response(void *buf, int pid, unsigned long long ret);
 
 void* listener(void*);
+void* pinger(void*);
 
 void ping(struct sockaddr_in *addr, int pid,  unsigned short seq, unsigned short hostid);
 

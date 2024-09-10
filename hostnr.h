@@ -1,0 +1,4 @@
+#define HOST_ROUTER 0
+#define HOST_SWITCH_SERV1 1
+#define HOST_SWITCH_SERV2 2
+#define HOST_SWITCH_SERV3 3

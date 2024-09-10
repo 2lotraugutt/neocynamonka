@@ -1,7 +1,8 @@
 #include "ping.h"
+#include "thread_configs.h"
 
 
-unsigned short checksum(void *b, int len) /* {{{ */
+unsigned short checksum(void *b, int len) 
 {
 	unsigned short *buf = b;
 	unsigned int sum=0;
@@ -16,10 +17,10 @@ unsigned short checksum(void *b, int len) /* {{{ */
 	result = ~sum;
 	return result;
 }
-/* }}} */
 
-void response(void *buf, int pid, unsigned long long ret) /* {{{ */
+void response(void *buf, int pid, unsigned long long ret) 
 {
+	pid = htons(pid);
 	struct iphdr   *ip   = buf;
 	struct icmphdr *icmp = buf + ip->ihl * 4;
 
@@ -45,21 +46,24 @@ void response(void *buf, int pid, unsigned long long ret) /* {{{ */
 	}
 	send_time_sec     = ntohl(send_time_sec);
 	send_time_nanosec = ntohl(send_time_nanosec);
-	printf("rtt[%llu us]", ret - ((unsigned long long) send_time_sec * 1000000 + (unsigned long long) send_time_nanosec / 1000));
-	printf(" seq[%u]", ntohs(icmp->un.echo.sequence));
-	printf(" id[%d]",  ntohs(icmp->un.echo.id));
-	printf(" hostid[%u]", hostid);
-	printf(" src[%s]",
-		inet_ntoa(*((struct in_addr *)&((ip->saddr)))));
-	if (ntohs(icmp->un.echo.id) != pid)
-		printf(" FAILED PING [%u]", ntohs(icmp->un.echo.id));
-	printf("\n");
+	int hid = ntohs(hostid);
+	if (hid>=0 && hid<HOSTC) {
+		hosts[hid].ping_us = ret - ((unsigned long long) send_time_sec * 1000000 + (unsigned long long) send_time_nanosec / 1000);
+	}
+	/*printf(" seq[%u]", ntohs(icmp->un.echo.sequence));*/
+	/*printf(" id[%d]",  ntohs(icmp->un.echo.id));*/
+	/*printf(" hostid[%u]", hostid);*/
+	/*printf(" src[%s]",*/
+		/*inet_ntoa(*((struct in_addr *)&((ip->saddr)))));*/
+	/*if (ntohs(icmp->un.echo.id) != pid)*/
+		/*printf(" FAILED PING [%u]", ntohs(icmp->un.echo.id));*/
+		/*printf(" FAILED PING [%u]", (icmp->un.echo.id));*/
+	/*printf("\n");*/
 }
-/* }}} */
 
-void* listener(void* pid_VP) /* {{{ */
+void* listener(void* pid_VP) 
 {
-	int pid = *(int*)pid_VP;
+	short pid = *(int*)pid_VP;
 	int sd;
 	struct sockaddr_in addr;
 	unsigned char buf[1024];
@@ -99,9 +103,8 @@ void* listener(void* pid_VP) /* {{{ */
 	}
 	exit(0);
 }
-/* }}} */
 
-void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short hostid) /* {{{ */
+void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short hostid) 
 {
 	const int ttl  = 61;
 	int sd;
@@ -118,7 +121,7 @@ void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short 
 
 	memset(&pckt, 0, sizeof(pckt));
 	pckt.hdr.type       = ICMP_ECHO;
-	pckt.hdr.un.echo.id = htons(pid);
+	pckt.hdr.un.echo.id = pid;
 
 	struct timespec t;
 	clock_gettime(CLOCK_REALTIME, &t);
@@ -143,4 +146,13 @@ void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short 
 	if (sendto(sd, &pckt, sizeof(pckt), 0, (struct sockaddr*)addr, sizeof(*addr)) <= 0 )
 		perror("sendto");
 }
-/* }}} */
+void* pinger(void* VP) {
+	int pid = *(int*)VP;
+	for(;;)  {
+		for(int i = 0; i<HOSTC; i++) {
+			ping(&hosts[i].addr,pid, hosts[i].last_seq++, i);
+		}
+		sleep(1);
+	}
+	return NULL;
+}

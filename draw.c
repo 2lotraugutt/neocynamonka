@@ -1,4 +1,6 @@
 #include <ncurses.h>
+#include "hosts.h"
+#include "hostnr.h"
 
 #define OK_PAIR 1
 #define WAR_PAIR 2
@@ -13,6 +15,7 @@ void draw_box(int x, int y, int h, int w) {
 	mvaddch(y, x, '+'); mvaddch(y+w, x, '+'); mvaddch(y, x+h, '+'); mvaddch(y+w, x+h, '+');
 }
 
+
 int screen_update() {
 	static int c = 0;
 	char got = getch();
@@ -23,6 +26,10 @@ int screen_update() {
 	printw("Serverownia");
 	int y = 3;
 	draw_box(2,  y, BOX_WIDTH,  10);
+	move(y+1, 4);
+	printw("Router 10.10.0.1");
+	move(y+2, 4);
+	printw("RTTime %d", hosts[HOST_ROUTER].ping_us);
 	draw_box(2,  y+=10, BOX_WIDTH,  10);
 	move(1, BOX_WIDTH+6);
 	printw("Blok A");
