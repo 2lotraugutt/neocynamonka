@@ -38,7 +38,7 @@ void draw_device(char* name, int id, int x, int* y) {
 		move(*y+2, x+2);
 		printw("%s", name);
 		move(*y+3, x+2);
-		printw("last seen %ds ago",time_c-hosts[id].last_seen);
+		printw("last %ds ago",time_c-hosts[id].last_seen);
 
 	}
 	*y+=6;
