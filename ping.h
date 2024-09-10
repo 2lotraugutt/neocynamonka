@@ -39,6 +39,10 @@ struct _host
 	// struct _llist *rtt;
 };
 
+struct ping_msg {
+	int host_nr;
+};
+
 struct packet
 {
 	struct icmphdr hdr;

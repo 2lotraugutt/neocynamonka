@@ -1,5 +1,6 @@
 #include "ping.h"
 #include "thread_configs.h"
+#include "log.h"
 
 
 unsigned short checksum(void *b, int len) 
@@ -28,25 +29,24 @@ void response(void *buf, int pid, unsigned long long ret)
 	unsigned long send_time_sec, send_time_nanosec;
 	char *name = malloc(6);
 	unsigned char ver;
-	unsigned short hostid;
+	unsigned short hid;
 	memcpy(name,               ((char *)buf) + hdr_size,      5);
 	memcpy(&ver,               ((char *)buf) + hdr_size + 5,  1);
-	memcpy(&hostid,            ((char *)buf) + hdr_size + 6,  2);
+	memcpy(&hid,            ((char *)buf) + hdr_size + 6,  2);
 	memcpy(&send_time_sec,     ((char *)buf) + hdr_size + 8,  4);
 	memcpy(&send_time_nanosec, ((char *)buf) + hdr_size + 12, 4);
 	for (int i = 0; i < 5; i++)
 		name[i] = name[i] - '0';
 	name[5] = '\0';
-	hostid = ntohs(hostid);
 
 	if (strcmp(name, "PINGD") != 0) { return; }
 	send_time_sec     = ntohl(send_time_sec);
 	send_time_nanosec = ntohl(send_time_nanosec);
-	int hid = ntohs(hostid);
 	if (hid>=0 && hid<HOSTC) {
 		hosts[hid].ping_us = ret - ((unsigned long long) send_time_sec * 1000000 + (unsigned long long) send_time_nanosec / 1000);
 		hosts[hid].last_seen = time(0);
 	}
+	LOG("ping response from host nr %d\n", hid);
 }
 
 void* listener(void* pid_VP) 
@@ -121,7 +121,6 @@ void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short 
 	for (unsigned int i = 0; i < strlen(name); i++)
 		header[i] = name[i] + '0';
 
-	hostid = htons(hostid);
 	memcpy(pckt.msg,      header,  5);
 	memcpy(pckt.msg + 5,  &ver,    1);
 	memcpy(pckt.msg + 6,  &hostid, 2);
