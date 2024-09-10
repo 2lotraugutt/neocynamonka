@@ -45,7 +45,7 @@ int screen_update() {
 	static int c = 0;
 	char got = getch();
 	if (got == 'q') return 1;
-	clear();
+	erase();
 	int x =2;
 	int y = 1;
 	draw_device("Router", HOST_ROUTER, x, &y);
