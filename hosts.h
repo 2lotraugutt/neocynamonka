@@ -5,6 +5,7 @@ extern struct drawc* drawc;
 extern int drawcc;
 enum draw_t {
 	DRAW_SECTION,
+	DRAW_LSECTION,
 	DRAW_BR,
 	DRAW_HOST,
 };

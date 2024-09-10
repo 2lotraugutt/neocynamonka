@@ -22,6 +22,7 @@ void setup_one_host(int id, char* addr){
 enum DECLARATION {
 	HOST,
 	SECTION,
+	LSECTION,
 	BR,
 };
 
@@ -47,6 +48,7 @@ int setup_hosts() {
 				if(buf_pos == 4 && !memcmp("HOST", buf, 4))	dec = HOST;
 				else if(buf_pos == 2 && !memcmp("BR", buf, 2))	dec = BR;
 				else if(buf_pos == 7 && !memcmp("SECTION", buf, 7))	dec = SECTION;
+				else if(buf_pos == 8 && !memcmp("LSECTION", buf, 8))	dec = LSECTION;
 				else {dec = 0 ; buf_pos=0;continue;}
 			}
 
@@ -56,6 +58,14 @@ int setup_hosts() {
 				drawc[drawcc].type = DRAW_HOST;
 				drawc[drawcc].name = strdup(args[1]);
 				drawcc++; argc = 0; buf_pos = 0; continue;
+			}
+			else if(argc == 1 && dec==LSECTION){
+				LOG("Section %s\n", args[0]);
+				LOG("SECTION\n");
+				drawc[drawcc].type = DRAW_LSECTION;
+				drawc[drawcc].name = strdup(args[0]);
+				drawcc++;
+				argc = 0; buf_pos = 0; continue;
 			}
 			else if(argc == 1 && dec==SECTION){
 				LOG("Section %s\n", args[0]);

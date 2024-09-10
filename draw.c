@@ -2,6 +2,7 @@
 #include "hosts.h"
 #include "hostnr.h"
 #include <time.h>
+#include "log.h"
 
 #define OK_PAIR 1
 #define WAR_PAIR 2
@@ -61,7 +62,7 @@ int screen_update() {
 			case DRAW_BR:
 				attron(COLOR_PAIR(NORM_PAIR));
 				draw_br(x, y+1, BOX_WIDTH);
-				y+=3;
+				y+=4;
 				break;
 			case DRAW_SECTION:
 				if (!is_fs) {
@@ -70,6 +71,14 @@ int screen_update() {
 				}
 				attron(COLOR_PAIR(NORM_PAIR));
 				mvprintw(1,x+1,"%s", drawc[i].name);
+				is_fs = 0;
+				break;
+			case DRAW_LSECTION:
+				LOG("LSECTION");
+				attron(COLOR_PAIR(NORM_PAIR));
+				mvprintw(y+1,x+1,"%s", drawc[i].name);
+				draw_br(x, y+2, BOX_WIDTH);
+				y+=4;
 				is_fs = 0;
 				break;
 		}
