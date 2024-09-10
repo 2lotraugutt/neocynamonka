@@ -16,6 +16,10 @@ void draw_box(int x, int y, int h, int w) {
 	mvaddch(y, x, '+'); mvaddch(y+w, x, '+'); mvaddch(y, x+h, '+'); mvaddch(y+w, x+h, '+');
 }
 
+void draw_br(int x, int y, int h) { 
+	for(int xi = x; xi <= x+h; xi++) { mvaddch(y, xi, '-');} 
+}
+
 
 void draw_device(char* name, int id, int x, int* y) {
 	int time_c = time(0);
@@ -47,11 +51,33 @@ int screen_update() {
 	if (got == 'q') return 1;
 	erase();
 	int x =2;
-	int y = 1;
-	draw_device("Router", HOST_ROUTER, x, &y);
-	draw_device("ServSW 1", HOST_SWITCH_SERV1, x, &y);
-	draw_device("ServSW 2", HOST_SWITCH_SERV2, x, &y);
-	draw_device("ServSW 3", HOST_SWITCH_SERV3, x, &y);
+	int y = 3;
+	int devc= 0;
+	int is_fs = 1;
+	for (int i = 0; i<drawcc; i++) {
+		switch( drawc[i].type ) {
+			case DRAW_HOST:
+				draw_device(drawc[i].name, devc++, x, &y); break;
+			case DRAW_BR:
+				attron(COLOR_PAIR(NORM_PAIR));
+				draw_br(x, y+1, BOX_WIDTH);
+				y+=3;
+				break;
+			case DRAW_SECTION:
+				if (!is_fs) {
+					x+=BOX_WIDTH; 
+					y = 3;
+				}
+				attron(COLOR_PAIR(NORM_PAIR));
+				mvprintw(1,x+1,"%s", drawc[i].name);
+				is_fs = 0;
+				break;
+		}
+	}
+	/* draw_device("Router", HOST_ROUTER, x, &y); */
+	/* draw_device("ServSW 1", HOST_SWITCH_SERV1, x, &y); */
+	/* draw_device("ServSW 2", HOST_SWITCH_SERV2, x, &y); */
+	/* draw_device("ServSW 3", HOST_SWITCH_SERV3, x, &y); */
 	refresh();
 	return 0;
 }
