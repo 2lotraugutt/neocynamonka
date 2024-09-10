@@ -27,21 +27,21 @@ void draw_device(char* name, int id, int x, int* y) {
 	else if(time_c-hosts[id].last_seen<5) attron(COLOR_PAIR(WAR_PAIR));
 	else attron(COLOR_PAIR(ERR_PAIR));
 
-	draw_box(x, *y, BOX_WIDTH,  5); 
+	draw_box(x, *y, BOX_WIDTH,  3); 
 	if(time_c-hosts[id].last_seen<5) {
-		move(*y+2, x+2);
+		move(*y+1, x+2);
 		printw("%s", name);
-		move(*y+3, x+2);
+		move(*y+2, x+2);
 		printw("RTT %.3fms", ((float)hosts[id].ping_us)/1000);
 	}
 	else {
-		move(*y+2, x+2);
+		move(*y+1, x+2);
 		printw("%s", name);
-		move(*y+3, x+2);
+		move(*y+2, x+2);
 		printw("last %ds ago",time_c-hosts[id].last_seen);
 
 	}
-	*y+=6;
+	*y+=4;
 	
 }
 
