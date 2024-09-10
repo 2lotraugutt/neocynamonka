@@ -27,7 +27,7 @@ enum DECLARATION {
 
 int HOSTC = 0;
 #define MAX_HOSTS 512
-#define cynamonka_config "cynamonka.conf"
+#define cynamonka_config "/etc/cynamonka.conf"
 
 int setup_hosts() {
 	hosts = malloc(MAX_HOSTS*sizeof(struct geneneric_network_host));
