@@ -132,6 +132,7 @@ void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short 
 
 	if (sendto(sd, &pckt, sizeof(pckt), 0, (struct sockaddr*)addr, sizeof(*addr)) <= 0 )
 		perror("sendto");
+	close(sd);
 }
 void* pinger(void* VP) {
 	int pid = *(int*)VP;
