@@ -20,7 +20,7 @@ void draw_box(int x, int y, int h, int w) {
 void draw_device(char* name, int id, int x, int* y) {
 	int time_c = time(0);
 	if(time_c-hosts[id].last_seen<2) attron(COLOR_PAIR(OK_PAIR));
-	else if(time_c-hosts[id].last_seen<2) attron(COLOR_PAIR(WAR_PAIR));
+	else if(time_c-hosts[id].last_seen<5) attron(COLOR_PAIR(WAR_PAIR));
 	else attron(COLOR_PAIR(ERR_PAIR));
 
 	draw_box(x, *y, BOX_WIDTH,  5); 

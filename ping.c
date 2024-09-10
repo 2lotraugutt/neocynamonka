@@ -39,11 +39,7 @@ void response(void *buf, int pid, unsigned long long ret)
 	name[5] = '\0';
 	hostid = ntohs(hostid);
 
-	if (strcmp(name, "PINGD") != 0) {
-		printf(" invalid pingd pkt from src[%s]\n",
-			inet_ntoa(*((struct in_addr *)&((ip->saddr)))));
-		return;
-	}
+	if (strcmp(name, "PINGD") != 0) { return; }
 	send_time_sec     = ntohl(send_time_sec);
 	send_time_nanosec = ntohl(send_time_nanosec);
 	int hid = ntohs(hostid);
@@ -51,14 +47,6 @@ void response(void *buf, int pid, unsigned long long ret)
 		hosts[hid].ping_us = ret - ((unsigned long long) send_time_sec * 1000000 + (unsigned long long) send_time_nanosec / 1000);
 		hosts[hid].last_seen = time(0);
 	}
-	printf(" seq[%u]", ntohs(icmp->un.echo.sequence));
-	printf(" id[%d]",  ntohs(icmp->un.echo.id));
-	printf(" hostid[%u]", hostid);
-	printf(" src[%s]",
-		inet_ntoa(*((struct in_addr *)&((ip->saddr)))));
-	if (ntohs(icmp->un.echo.id) != pid)
-		printf(" FAILED PING [%u]", (icmp->un.echo.id));
-	printf("\n");
 }
 
 void* listener(void* pid_VP) 
