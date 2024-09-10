@@ -49,16 +49,16 @@ void response(void *buf, int pid, unsigned long long ret)
 	int hid = ntohs(hostid);
 	if (hid>=0 && hid<HOSTC) {
 		hosts[hid].ping_us = ret - ((unsigned long long) send_time_sec * 1000000 + (unsigned long long) send_time_nanosec / 1000);
+		hosts[hid].last_seen = time(0);
 	}
-	/*printf(" seq[%u]", ntohs(icmp->un.echo.sequence));*/
-	/*printf(" id[%d]",  ntohs(icmp->un.echo.id));*/
-	/*printf(" hostid[%u]", hostid);*/
-	/*printf(" src[%s]",*/
-		/*inet_ntoa(*((struct in_addr *)&((ip->saddr)))));*/
-	/*if (ntohs(icmp->un.echo.id) != pid)*/
-		/*printf(" FAILED PING [%u]", ntohs(icmp->un.echo.id));*/
-		/*printf(" FAILED PING [%u]", (icmp->un.echo.id));*/
-	/*printf("\n");*/
+	printf(" seq[%u]", ntohs(icmp->un.echo.sequence));
+	printf(" id[%d]",  ntohs(icmp->un.echo.id));
+	printf(" hostid[%u]", hostid);
+	printf(" src[%s]",
+		inet_ntoa(*((struct in_addr *)&((ip->saddr)))));
+	if (ntohs(icmp->un.echo.id) != pid)
+		printf(" FAILED PING [%u]", (icmp->un.echo.id));
+	printf("\n");
 }
 
 void* listener(void* pid_VP) 

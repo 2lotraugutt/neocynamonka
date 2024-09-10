@@ -6,7 +6,7 @@ NAME=neocynamonka
 all: $(NAME)
 
 $(NAME): ${OBJ}
-	$(CC) $(CFLAGS) ${OBJ} -o $@
+	$(CC) $(CFLAGS) ${OBJ} -o $@ -lncurses
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

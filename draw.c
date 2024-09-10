@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include "hosts.h"
 #include "hostnr.h"
+#include <time.h>
 
 #define OK_PAIR 1
 #define WAR_PAIR 2
@@ -16,27 +17,41 @@ void draw_box(int x, int y, int h, int w) {
 }
 
 
+void draw_device(char* name, int id, int x, int* y) {
+	int time_c = time(0);
+	if(time_c-hosts[id].last_seen<2) attron(COLOR_PAIR(OK_PAIR));
+	else if(time_c-hosts[id].last_seen<2) attron(COLOR_PAIR(WAR_PAIR));
+	else attron(COLOR_PAIR(ERR_PAIR));
+
+	draw_box(x, *y, BOX_WIDTH,  5); 
+	if(time_c-hosts[id].last_seen<5) {
+		move(*y+2, x+2);
+		printw("%s", name);
+		move(*y+3, x+2);
+		printw("RTT %dus", hosts[id].ping_us);
+	}
+	else {
+		move(*y+2, x+2);
+		printw("%s", name);
+		move(*y+3, x+2);
+		printw("last seen %ds ago",time_c-hosts[id].last_seen);
+
+	}
+	*y+=6;
+	
+}
+
 int screen_update() {
 	static int c = 0;
 	char got = getch();
 	if (got == 'q') return 1;
 	clear();
-	move(1, 2+2);
-	attron(COLOR_PAIR(NORM_PAIR));
-	printw("Serverownia");
-	int y = 3;
-	draw_box(2,  y, BOX_WIDTH,  10);
-	move(y+1, 4);
-	printw("Router 10.10.0.1");
-	move(y+2, 4);
-	printw("RTTime %d", hosts[HOST_ROUTER].ping_us);
-	draw_box(2,  y+=10, BOX_WIDTH,  10);
-	move(1, BOX_WIDTH+6);
-	printw("Blok A");
-	draw_box(BOX_WIDTH+4, 3 , BOX_WIDTH, 2);
-	move(1, BOX_WIDTH*2+8);
-	printw("Blok B");
-	draw_box(BOX_WIDTH*2+6, 3 , BOX_WIDTH, 2);
+	int x =2;
+	int y = 1;
+	draw_device("Router", HOST_ROUTER, x, &y);
+	draw_device("ServSW 1", HOST_SWITCH_SERV1, x, &y);
+	draw_device("ServSW 2", HOST_SWITCH_SERV2, x, &y);
+	draw_device("ServSW 3", HOST_SWITCH_SERV3, x, &y);
 	refresh();
 	return 0;
 }
@@ -44,7 +59,7 @@ int screen_update() {
 void* init_draw(void* null) {
 	initscr();
 	keypad(stdscr, TRUE);
-	timeout(100);
+	timeout(500);
 	curs_set(0);
 	cbreak();
 	noecho();

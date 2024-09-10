@@ -5,7 +5,7 @@
 #include "hosts.h"
 
 struct geneneric_network_host* hosts;
-int HOSTC = 2;
+int HOSTC = 4;
 void setup_one_host(int id, char* addr){
 	hosts[id].ping_us = 0;
 	hosts[id].last_seen = time(0);
@@ -18,5 +18,7 @@ int setup_hosts() {
 	hosts = malloc(HOSTC*sizeof(struct geneneric_network_host));
 	setup_one_host(HOST_ROUTER, "10.10.0.1");
 	setup_one_host(HOST_SWITCH_SERV1, "10.10.0.11");
+	setup_one_host(HOST_SWITCH_SERV2, "10.10.0.12");
+	setup_one_host(HOST_SWITCH_SERV3, "10.10.0.13");
 	return 0;
 }
