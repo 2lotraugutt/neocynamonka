@@ -43,7 +43,7 @@ int setup_hosts() {
 			buf[buf_pos] = 0;
 			if(last_wws) {continue; args[argc]++;};
 			if(!argc) {
-				printf("\033[31mBUF\033[0m\t%s\n", buf);
+				LOG("BUF %s\n", buf);
 				if(buf_pos == 4 && !memcmp("HOST", buf, 4))	dec = HOST;
 				else if(buf_pos == 2 && !memcmp("BR", buf, 2))	dec = BR;
 				else if(buf_pos == 7 && !memcmp("SECTION", buf, 7))	dec = SECTION;
@@ -51,14 +51,14 @@ int setup_hosts() {
 			}
 
 			if(argc == 2 && dec==HOST){
-				printf("Host %s %s\n", args[0], args[1]);
+				LOG("Host %s %s\n", args[0], args[1]);
 				setup_one_host(HOSTC++, args[0]);
 				drawc[drawcc].type = DRAW_HOST;
 				drawc[drawcc].name = strdup(args[1]);
 				drawcc++; argc = 0; buf_pos = 0; continue;
 			}
 			else if(argc == 1 && dec==SECTION){
-				printf("Section %s\n", args[0]);
+				LOG("Section %s\n", args[0]);
 				LOG("SECTION\n");
 				drawc[drawcc].type = DRAW_SECTION;
 				drawc[drawcc].name = strdup(args[0]);
@@ -66,7 +66,7 @@ int setup_hosts() {
 				argc = 0; buf_pos = 0; continue;
 			}
 			else if(argc == 0 && dec==BR){ 
-				printf("Break\n");
+				LOG("Break\n");
 				LOG("BR\n");
 				drawc[drawcc].type = DRAW_BR;
 				drawc[drawcc].name = NULL;

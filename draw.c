@@ -65,7 +65,7 @@ int screen_update() {
 				break;
 			case DRAW_SECTION:
 				if (!is_fs) {
-					x+=BOX_WIDTH; 
+					x+=BOX_WIDTH+2; 
 					y = 3;
 				}
 				attron(COLOR_PAIR(NORM_PAIR));
