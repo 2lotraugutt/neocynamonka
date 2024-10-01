@@ -9,7 +9,7 @@
 #include "log.h"
 #include "token.h"
 #define ERREXT(x) {dprintf(2, "\033[31m%s\033[0m\n", x); exit(-1);}
-#define SYNTAXERR(x) {dprintf(2, "\033[31mSyntax error in %s line %d (at %s)\033[0m\n",cynamonka_config , yylineno, yytext); exit(-1);}
+#define SYNTAXERR(x) {dprintf(2, "\033[31mSyntax error in %s line %d (at \"\033[1m%s\033[0;31m\") (%s)\033[0m\n",cynamonka_config , yylineno, yytext, x); exit(-1);}
 
 
 struct geneneric_network_host* hosts;
@@ -43,9 +43,7 @@ int setup_hosts() {
 	yyset_in(fp);
 	char buf[1024]; size_t buf_pos = 0;
 	char* args[10]; int argc = 0;
-	printf("Starting Lex\n");
 	int ntoken, vtoken;
-	printf("%p\n", &yylex);
 	ntoken = yylex();
 	while(ntoken) {
 		switch (ntoken){
@@ -71,6 +69,7 @@ int setup_hosts() {
 	 			drawc[drawcc++].name = NULL; 
 	 			break;
 			default:
+			case UNEXPECTED:
 				SYNTAXERR("Unexpected Identifier")
 
 		}

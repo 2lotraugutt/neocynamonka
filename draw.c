@@ -10,14 +10,19 @@
 #define NORM_PAIR 5
 #define BOX_WIDTH 20
 
-void draw_box(int x, int y, int h, int w) {
-	for(int yi = y+1; yi < y+w; yi++) { mvaddch(yi, x, '|'); mvaddch(yi, x+h, '|'); }
-	for(int xi = x+1; xi < x+h; xi++) { mvaddch(y, xi, '-'); mvaddch(y+w, xi, '-'); } 
-	mvaddch(y, x, '+'); mvaddch(y+w, x, '+'); mvaddch(y, x+h, '+'); mvaddch(y+w, x+h, '+');
+void draw_box(int x, int y, int w, int h) {
+	mvhline(y, x+1, 0, w-1);
+	mvhline(y+h, x+1, 0, w-1);
+	mvvline(y+1, x, 0, h-1);
+	mvvline(y+1, x+w, 0, h-1);
+	mvaddch(y, x, ACS_ULCORNER); 
+	mvaddch(y, x+w, ACS_URCORNER); 
+	mvaddch(y+h, x, ACS_LLCORNER); 
+	mvaddch(y+h, x+w, ACS_LRCORNER);
 }
 
-void draw_br(int x, int y, int h) { 
-	for(int xi = x; xi <= x+h; xi++) { mvaddch(y, xi, '-');} 
+void draw_br(int x, int y, int w) { 
+	mvhline(y, x+1, 0, w-1);
 }
 
 

@@ -6,4 +6,5 @@ enum token {
 	BR,
 	IPADDR,
 	ID,
+	UNEXPECTED,
 };
