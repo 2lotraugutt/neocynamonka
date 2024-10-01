@@ -4,9 +4,11 @@
 #include "ping.h"
 #include "hosts.h"
 #include "log.h"
+#include "pipe.h"
 
 int main(int argc, char** argv) {
-	init_log_fd();
+	// init_log_fd();
+	setup_pipe();
 	bool quiet = false;
 	for (int i = 0; i<argc; i++)
 		if(argv[i][0]=='-')

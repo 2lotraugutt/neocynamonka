@@ -1,6 +1,5 @@
 #include <ncurses.h>
 #include "hosts.h"
-#include "hostnr.h"
 #include <time.h>
 #include "log.h"
 
@@ -61,8 +60,8 @@ int screen_update() {
 				draw_device(drawc[i].name, devc++, x, &y); break;
 			case DRAW_BR:
 				attron(COLOR_PAIR(NORM_PAIR));
-				draw_br(x, y+1, BOX_WIDTH);
-				y+=4;
+				draw_br(x, y, BOX_WIDTH);
+				y+=1;
 				break;
 			case DRAW_SECTION:
 				if (!is_fs) {
@@ -74,7 +73,6 @@ int screen_update() {
 				is_fs = 0;
 				break;
 			case DRAW_LSECTION:
-				LOG("LSECTION");
 				attron(COLOR_PAIR(NORM_PAIR));
 				mvprintw(y+1,x+1,"%s", drawc[i].name);
 				draw_br(x, y+2, BOX_WIDTH);

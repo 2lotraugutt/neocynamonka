@@ -46,7 +46,6 @@ void response(void *buf, int pid, unsigned long long ret)
 		hosts[hid].ping_us = ret - ((unsigned long long) send_time_sec * 1000000 + (unsigned long long) send_time_nanosec / 1000);
 		hosts[hid].last_seen = time(0);
 	}
-	LOG("ping response from host nr %d\n", hid);
 }
 
 void* listener(void* pid_VP) 
