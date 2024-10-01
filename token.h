@@ -1,0 +1,9 @@
+enum token {
+	ENDOFFILE,
+	HOST,
+	SECTION,
+	LSECTION,
+	BR,
+	IPADDR,
+	ID,
+};
