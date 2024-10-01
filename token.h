@@ -9,4 +9,6 @@ enum token {
 	IPADDR,
 	ID,
 	UNEXPECTED,
+	PIPE,
+	QUIET,
 };

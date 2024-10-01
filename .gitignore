@@ -1,4 +1,5 @@
 *.o
 ncm
-neocynamonka.log
+cynamonka.fifo
+cynamonka.log
 cynamonka.conf

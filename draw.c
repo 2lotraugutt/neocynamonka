@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include "hosts.h"
+#include "setup.h"
 #include <time.h>
 #include "log.h"
 

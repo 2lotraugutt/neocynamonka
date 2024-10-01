@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "draw.h"
 #include "ping.h"
-#include "hosts.h"
+#include "setup.h"
 #include "log.h"
 #include "pipe.h"
 
@@ -12,11 +12,10 @@ enum arg_type {
 };
 
 char* cynamonka_config = "/etc/cynamonka.conf";
+bool quiet = false;
 
 int main(int argc, char** argv) {
-	// init_log_fd();
-	setup_pipe();
-	bool quiet = false;
+	signal(SIGPIPE, SIG_IGN); //prevent problems with broken pipe
 	enum arg_type next_arg = OPT;
 	for (int i = 1; i<argc; i++)
 		if(next_arg == OPT && argv[i][0]=='-')
@@ -35,11 +34,12 @@ int main(int argc, char** argv) {
 			next_arg = OPT;
 		}
 
-	setup_hosts();
+	setup();
 	pthread_attr_t t_attr;
 	pthread_attr_init(&t_attr);
 	int pid = getpid();
-	pthread_t ping_t, listen_t, draw_t;
+	pthread_t ping_t, listen_t, draw_t, pipe_t;
+	pthread_create(&pipe_t, &t_attr, &init_pipe, NULL);
 	if(!quiet) pthread_create(&draw_t, &t_attr, &init_draw, NULL);
 	pthread_create(&listen_t, &t_attr, &listener, &pid);
 	pthread_create(&ping_t, &t_attr, &pinger, &pid);

@@ -24,4 +24,4 @@ struct geneneric_network_host {
 };
 
 extern struct geneneric_network_host* hosts;
-int setup_hosts();
+int setup();

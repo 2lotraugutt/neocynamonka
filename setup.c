@@ -1,13 +1,15 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "hosts.h"
+#include "setup.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "log.h"
 #include "token.h"
+#include "pipe.h"
 #define ERREXT(x) {dprintf(2, "\033[31m%s\033[0m\n", x); exit(-1);}
 #define SYNTAXERR(x) {dprintf(2, "\033[31mSyntax error in %s line %d (at \"\033[1m%s\033[0;31m\") (%s)\033[0m\n",cynamonka_config , yylineno, yytext, x); exit(-1);}
 
@@ -35,8 +37,10 @@ extern void yyset_in();
 extern int yylineno;
 extern char* yytext;
 
+extern bool quiet;
 
-int setup_hosts() {
+
+int setup() {
 	hosts = malloc(MAX_HOSTS*sizeof(struct geneneric_network_host));
 	drawc = malloc(MAX_HOSTS*sizeof(struct drawc));
 	FILE* fp = fopen(cynamonka_config, "r");
@@ -48,6 +52,12 @@ int setup_hosts() {
 	ntoken = yylex();
 	while(ntoken) {
 		switch (ntoken){
+			case PIPE:
+				if (yylex() != ID) SYNTAXERR("Expected ID")
+				setup_pipe(yytext);
+				break;
+			case QUIET:
+				quiet = true; break;
 			case SECTION:
 				if (yylex() != ID) SYNTAXERR("Expected ID")
 	 			drawc[drawcc].type = DRAW_SECTION; 

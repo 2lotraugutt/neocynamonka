@@ -22,7 +22,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/ip_icmp.h>
-#include "hosts.h"
+#include "setup.h"
 
 
 // #include "util/linkedlist.h"

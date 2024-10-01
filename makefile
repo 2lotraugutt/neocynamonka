@@ -1,4 +1,4 @@
-OBJ=token.yy.o draw.o hosts.o log.o main.o ping.o pipe.o
+OBJ=token.yy.o draw.o setup.o log.o main.o ping.o pipe.o
 CC=gcc
 CFLAGS=-Ofast -lncurses
 NAME=ncm
