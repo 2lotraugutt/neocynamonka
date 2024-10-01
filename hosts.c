@@ -26,7 +26,8 @@ void setup_one_host(int id, char* addr){
 
 int HOSTC = 0;
 #define MAX_HOSTS 512
-#define cynamonka_config "/etc/cynamonka.conf"
+// #define cynamonka_config "/etc/cynamonka.conf"
+extern char* cynamonka_config;
 
 
 extern int yylex();
