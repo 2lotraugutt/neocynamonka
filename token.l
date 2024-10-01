@@ -10,6 +10,7 @@ void remove_quotes(char** str) {
 
 %%
 "HOST"		return HOST;
+"CHOST"		return CHOST;
 "SECTION"	return SECTION;
 "LSECTION"	return LSECTION;
 "BR"		return BR;

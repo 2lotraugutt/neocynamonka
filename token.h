@@ -1,6 +1,7 @@
 enum token {
 	ENDOFFILE,
 	HOST,
+	CHOST,
 	SECTION,
 	LSECTION,
 	BR,

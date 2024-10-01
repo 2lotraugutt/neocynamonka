@@ -8,6 +8,7 @@ enum draw_t {
 	DRAW_LSECTION,
 	DRAW_BR,
 	DRAW_HOST,
+	DRAW_CHOST,
 };
 struct drawc {
 	char* name;

@@ -64,6 +64,13 @@ int setup_hosts() {
 				if (yylex() != ID) SYNTAXERR("Expected ID")
 	 			drawc[drawcc++].name = strdup(yytext);
 				break;
+			case CHOST:
+				if (yylex() != IPADDR) SYNTAXERR("Expected IPAddr")
+	 			setup_one_host(HOSTC++, yytext);
+	 			drawc[drawcc].type = DRAW_CHOST;
+				if (yylex() != ID) SYNTAXERR("Expected ID")
+	 			drawc[drawcc++].name = strdup(yytext);
+				break;
 			case BR:
 	 			drawc[drawcc].type = DRAW_BR; 
 	 			drawc[drawcc++].name = NULL; 

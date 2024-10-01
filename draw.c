@@ -25,15 +25,28 @@ void draw_br(int x, int y, int w) {
 	mvhline(y, x+1, 0, w-1);
 }
 
+void fill_bg(int x, int y, int w , int h) {
+	for (int xi = x; xi<x+w; xi++)
+		for (int yi = y; yi<y+h; yi++)
+			mvaddch(yi, xi, ' ');
+}
 
-void draw_device(char* name, int id, int x, int* y) {
+#define MINUTE 60
+#define HOUR 60*MINUTE
+#define DAY 24*HOUR
+#define WEEK 7*DAY
+#define YEAR 365*DAY
+
+void draw_device(char* name, int id, int x, int* y, bool critical) {
 	int time_c = time(0);
-	if(time_c-hosts[id].last_seen<2) attron(COLOR_PAIR(OK_PAIR));
-	else if(time_c-hosts[id].last_seen<5) attron(COLOR_PAIR(WAR_PAIR));
-	else attron(COLOR_PAIR(ERR_PAIR));
+	int last = time_c-hosts[id].last_seen;
+	if(last<2) attron(COLOR_PAIR(OK_PAIR));
+	else if(last<5) attron(COLOR_PAIR(WAR_PAIR));
+	else if(!critical) attron(COLOR_PAIR(ERR_PAIR));
+	else {attron(COLOR_PAIR(CRIT_PAIR)); fill_bg(x, *y, BOX_WIDTH, 3);};
 
 	draw_box(x, *y, BOX_WIDTH,  3); 
-	if(time_c-hosts[id].last_seen<5) {
+	if(last<5) {
 		move(*y+1, x+2);
 		printw("%s", name);
 		move(*y+2, x+2);
@@ -43,7 +56,13 @@ void draw_device(char* name, int id, int x, int* y) {
 		move(*y+1, x+2);
 		printw("%s", name);
 		move(*y+2, x+2);
-		printw("last %ds ago",time_c-hosts[id].last_seen);
+		char unit = 's'; int last_ad = last;
+		if (last > YEAR*2) { last_ad = last/YEAR; unit='y'; }
+		else if (last > WEEK*2) { last_ad = last/WEEK; unit='w'; }
+		else if (last > DAY*2) { last_ad = last/DAY; unit='d'; }
+		else if (last > HOUR*2) { last_ad = last/HOUR; unit='h'; }
+		else if (last > MINUTE*2) { last_ad = last/MINUTE; unit='m'; }
+		printw("last %d%c ago",last_ad, unit);
 
 	}
 	*y+=4;
@@ -62,7 +81,9 @@ int screen_update() {
 	for (int i = 0; i<drawcc; i++) {
 		switch( drawc[i].type ) {
 			case DRAW_HOST:
-				draw_device(drawc[i].name, devc++, x, &y); break;
+				draw_device(drawc[i].name, devc++, x, &y, 0); break;
+			case DRAW_CHOST:
+				draw_device(drawc[i].name, devc++, x, &y, 1); break;
 			case DRAW_BR:
 				attron(COLOR_PAIR(NORM_PAIR));
 				draw_br(x, y, BOX_WIDTH);
@@ -86,10 +107,14 @@ int screen_update() {
 				break;
 		}
 	}
-	/* draw_device("Router", HOST_ROUTER, x, &y); */
-	/* draw_device("ServSW 1", HOST_SWITCH_SERV1, x, &y); */
-	/* draw_device("ServSW 2", HOST_SWITCH_SERV2, x, &y); */
-	/* draw_device("ServSW 3", HOST_SWITCH_SERV3, x, &y); */
+	{
+		attron(COLOR_PAIR(NORM_PAIR));
+		time_t sec = time(NULL);
+		struct tm* tm_info = localtime(&sec);
+		char time_buf[32];
+		strftime(time_buf, 32, "%Y-%m-%d %H:%M:%S", tm_info);
+		mvprintw(0,COLS-BOX_WIDTH,"%s", time_buf);
+	}
 	refresh();
 	return 0;
 }
