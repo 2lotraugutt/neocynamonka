@@ -58,17 +58,12 @@ int setup_hosts() {
 	 			drawc[drawcc].type = DRAW_LSECTION; 
 	 			drawc[drawcc++].name = strdup(yytext); 
 	 			break;
-			case HOST:
+			case HOST: drawc[drawcc].type = DRAW_HOST; goto host_common;
+			case CHOST: drawc[drawcc].type = DRAW_CHOST; goto host_common;
+			case OHOST: drawc[drawcc].type = DRAW_OHOST; goto host_common;
+			host_common:
 				if (yylex() != IPADDR) SYNTAXERR("Expected IPAddr")
 	 			setup_one_host(HOSTC++, yytext);
-	 			drawc[drawcc].type = DRAW_HOST;
-				if (yylex() != ID) SYNTAXERR("Expected ID")
-	 			drawc[drawcc++].name = strdup(yytext);
-				break;
-			case CHOST:
-				if (yylex() != IPADDR) SYNTAXERR("Expected IPAddr")
-	 			setup_one_host(HOSTC++, yytext);
-	 			drawc[drawcc].type = DRAW_CHOST;
 				if (yylex() != ID) SYNTAXERR("Expected ID")
 	 			drawc[drawcc++].name = strdup(yytext);
 				break;

@@ -37,13 +37,14 @@ void fill_bg(int x, int y, int w , int h) {
 #define WEEK 7*DAY
 #define YEAR 365*DAY
 
-void draw_device(char* name, int id, int x, int* y, bool critical) {
+void draw_device(char* name, int id, int x, int* y, int type) {
 	int time_c = time(0);
 	int last = time_c-hosts[id].last_seen;
 	if(last<2) attron(COLOR_PAIR(OK_PAIR));
 	else if(last<5) attron(COLOR_PAIR(WAR_PAIR));
-	else if(!critical) attron(COLOR_PAIR(ERR_PAIR));
-	else {attron(COLOR_PAIR(CRIT_PAIR)); fill_bg(x, *y, BOX_WIDTH, 3);};
+	else if(type==0) attron(COLOR_PAIR(ERR_PAIR));
+	else if(type==1) {attron(COLOR_PAIR(CRIT_PAIR)); fill_bg(x, *y, BOX_WIDTH, 3);}
+	else if (type==2) return;
 
 	draw_box(x, *y, BOX_WIDTH,  3); 
 	if(last<5) {
@@ -84,6 +85,8 @@ int screen_update() {
 				draw_device(drawc[i].name, devc++, x, &y, 0); break;
 			case DRAW_CHOST:
 				draw_device(drawc[i].name, devc++, x, &y, 1); break;
+			case DRAW_OHOST:
+				draw_device(drawc[i].name, devc++, x, &y, 2); break;
 			case DRAW_BR:
 				attron(COLOR_PAIR(NORM_PAIR));
 				draw_br(x, y, BOX_WIDTH);
