@@ -43,7 +43,8 @@ void draw_device(char* name, int id, int x, int* y, int type) {
 	if(last<2) attron(COLOR_PAIR(OK_PAIR));
 	else if(last<5) attron(COLOR_PAIR(WAR_PAIR));
 	else if(type==0) attron(COLOR_PAIR(ERR_PAIR));
-	else if(type==1) {attron(COLOR_PAIR(CRIT_PAIR)); fill_bg(x, *y, BOX_WIDTH, 3);}
+	else if(type==1 && last%2) {attron(COLOR_PAIR(CRIT_PAIR)); fill_bg(x, *y, BOX_WIDTH, 3);}
+	else if(type==1 && !(last%2)) attron(COLOR_PAIR(ERR_PAIR));
 	else if (type==2) return;
 
 	draw_box(x, *y, BOX_WIDTH,  3); 
