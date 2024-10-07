@@ -83,8 +83,6 @@ void* listener(void* pid_VP)
 				bytes = recvfrom(sd, buf, sizeof(buf), 0, (struct sockaddr*) &addr, &len);
 				if (bytes > 0)
 					response(buf, pid, ret);
-				else
-					perror("recvfrom");
 			}
 		}
 	}
@@ -98,14 +96,10 @@ void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short 
 	struct packet pckt;
 
 	if ((sd = socket(PF_INET, SOCK_RAW|SOCK_NONBLOCK, IPPROTO_ICMP)) < 0) {
-		perror("socket");
 		return;
 	}
-	if (setsockopt(sd, SOL_IP, IP_TTL, &ttl, sizeof(ttl)) != 0)
-		perror("Set TTL option");
-	if (fcntl(sd, F_SETFL, O_NONBLOCK) != 0 )
-		perror("Request nonblocking I/O");
-
+	setsockopt(sd, SOL_IP, IP_TTL, &ttl, sizeof(ttl));
+	fcntl(sd, F_SETFL, O_NONBLOCK);
 	memset(&pckt, 0, sizeof(pckt));
 	pckt.hdr.type       = ICMP_ECHO;
 	pckt.hdr.un.echo.id = pid;
@@ -129,8 +123,7 @@ void ping(struct sockaddr_in *addr, int pid, unsigned short cnt, unsigned short 
 	pckt.hdr.un.echo.sequence = htons(cnt);
 	pckt.hdr.checksum = checksum(&pckt, sizeof(pckt));
 
-	if (sendto(sd, &pckt, sizeof(pckt), 0, (struct sockaddr*)addr, sizeof(*addr)) <= 0 )
-		perror("sendto");
+	sendto(sd, &pckt, sizeof(pckt), 0, (struct sockaddr*)addr, sizeof(*addr));
 	close(sd);
 }
 void* pinger(void* VP) {
