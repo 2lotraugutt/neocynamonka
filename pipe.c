@@ -26,8 +26,8 @@ void* init_pipe(void* NONE) {// Start pipe update thread
 		ftruncate(pipefd, 0);
 		dprintf(pipefd, "{\n\t\"\": {\n");
 		bool last_was_host = false;
+		int hostnr = 0;
 		for (int i = 0; i<drawcc; i++){
-			int hostnr = 0;
 			int sec = time(0);
 			switch( drawc[i].type ) {
 				case DRAW_LSECTION:
