@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include "setup.h"
 #include <time.h>
+#include <string.h>
 #include "log.h"
 
 #define OK_PAIR 1
@@ -75,11 +76,13 @@ void draw_newcol(int* x, int* y) {
 	*x+=BOX_WIDTH+2; 
 	*y = 3;
 }
-void ensure_space(int* x, int* y, int h) {
+int ensure_space(int* x, int* y, int h) {
 	if (*y+h >= LINES) {
 		*x+=BOX_WIDTH+2; 
 		*y = 3;
 	}
+	if (*x+BOX_WIDTH>=COLS) return 1;
+	return 0;
 }
 
 int screen_update() {
@@ -94,36 +97,39 @@ int screen_update() {
 	for (int i = 0; i<drawcc; i++) {
 		switch( drawc[i].type ) {
 			case DRAW_HOST:
-				ensure_space(&x, &y, 4);
+				if(ensure_space(&x, &y, 4)) goto drf;
 				draw_device(drawc[i].name, devc++, x, &y, 0); break;
 			case DRAW_CHOST:
-				ensure_space(&x, &y, 4);
+				if(ensure_space(&x, &y, 4)) goto drf;
 				draw_device(drawc[i].name, devc++, x, &y, 1); break;
 			case DRAW_OHOST:
-				ensure_space(&x, &y, 4);
+				if(ensure_space(&x, &y, 4)) goto drf;
 				draw_device(drawc[i].name, devc++, x, &y, 2); break;
 			case DRAW_BR:
 				attron(COLOR_PAIR(NORM_PAIR));
-				ensure_space(&x, &y,1);
+				if(ensure_space(&x, &y, 1)) goto drf;
 				draw_br(x, y, BOX_WIDTH);
 				y+=1;
 				break;
 			case DRAW_SECTION:
 				if (!is_fs) draw_newcol(&x, &y);
 				attron(COLOR_PAIR(NORM_PAIR));
-				mvprintw(1,x+1,"%s", drawc[i].name);
+				if(strlen(drawc[i].name)+x<COLS)
+					mvprintw(1,x+1,"%s", drawc[i].name);
 				is_fs = 0;
 				break;
 			case DRAW_LSECTION:
 				attron(COLOR_PAIR(NORM_PAIR));
-				ensure_space(&x, &y,4);
+				if(ensure_space(&x, &y, 4)) goto drf;
 				mvprintw(y+1,x+1,"%s", drawc[i].name);
-				draw_br(x, y+2, BOX_WIDTH);
+				if(strlen(drawc[i].name)+x<COLS)
+					draw_br(x, y+2, BOX_WIDTH);
 				y+=4;
 				is_fs = 0;
 				break;
 		}
 	}
+drf:
 	{
 		attron(COLOR_PAIR(NORM_PAIR));
 		time_t sec = time(NULL);
