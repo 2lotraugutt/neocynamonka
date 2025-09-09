@@ -39,9 +39,9 @@ Header only loging and basic escape codes
 #define ERROR(str)        dprintf(2, T_RED "%s" T_NONE " At f: %s l: %d)" T_NONE_NL,str, __FILE__ , __LINE__)
 #define ERRORF(f, arg...) dprintf(2, T_RED f T_NONE " (At f: %s l: %d)" T_NONE_NL, arg , __FILE__ , __LINE__ )
 
-#define CRITICAL_ERROR(str)        {dprintf(2, T_RED T_UNDERLINE  "%s (At f: %s l: %d)" T_NONE_NL,str, __FILE__ , __LINE__);exit(-1);}
-#define CRITICAL_ERRORF(f, arg...) {dprintf(2, T_RED T_UNDERLINE f " (At f: %s l: %d)" T_NONE_NL, arg , __FILE__ , __LINE__ );exit(-1);}
+#define CRITICAL_ERROR(str)        {dprintf(2, T_RED T_UNDERLINE  "%s (At f: %s l: %d errno %s)" T_NONE_NL,str, __FILE__ , __LINE__,strerror(errno));exit(-1);}
+#define CRITICAL_ERRORF(f, arg...) {dprintf(2, T_RED T_UNDERLINE f " (At f: %s l: %d errno: %s)" T_NONE_NL, arg , __FILE__ , __LINE__,strerror(errno));exit(-1);}
 
 #define LEX_SYNTAXERR(msg) CRITICAL_ERRORF("Syntax error %s line %d at \"%s\" (%s)", config_file, yylineno, yytext, msg)
-#define CRIT_HANDLE(statement, msg) if(statement)CRITICAL_ERRORF("%s %s", msg, strerror(errno));
+#define CRIT_HANDLE(statement, msg) if(statement)CRITICAL_ERROR(msg);
 
