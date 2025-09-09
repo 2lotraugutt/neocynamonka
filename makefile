@@ -1,7 +1,7 @@
 OBJ:=$(patsubst %.c, %.o, $(wildcard *.c)) $(patsubst %.l, %.yy.o, $(wildcard *.l))
 CC=gcc
 CFLAGS=-Ofast
-CLIB=-lncurses
+CLIB=-lncurses 
 NAME=ncm
 
 all: $(NAME) 

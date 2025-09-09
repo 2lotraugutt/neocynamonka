@@ -6,6 +6,8 @@ Header only loging and basic escape codes
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 #define T_RED       "\033[31m"
 #define T_GREEN     "\033[32m"
@@ -41,5 +43,5 @@ Header only loging and basic escape codes
 #define CRITICAL_ERRORF(f, arg...) {dprintf(2, T_RED T_UNDERLINE f " (At f: %s l: %d)" T_NONE_NL, arg , __FILE__ , __LINE__ );exit(-1);}
 
 #define LEX_SYNTAXERR(msg) CRITICAL_ERRORF("Syntax error %s line %d at \"%s\" (%s)", config_file, yylineno, yytext, msg)
-#define CRIT_HANDLE(statement, msg) if(statement)CRITICAL_ERROR(msg);
+#define CRIT_HANDLE(statement, msg) if(statement)CRITICAL_ERRORF("%s %s", msg, strerror(errno));
 
