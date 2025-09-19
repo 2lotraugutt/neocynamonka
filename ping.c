@@ -1,3 +1,4 @@
+#include <asm-generic/errno.h>
 #include <netinet/ip.h>
 #include <stdint.h>
 #include <stdint.h>
@@ -113,7 +114,7 @@ int send_ping_packet(struct sockaddr_in *addr, unsigned short seq, unsigned shor
 	packet.hdr.un.echo.id       = pid;
 	packet.hdr.checksum         = icmp_checksum(&packet, sizeof(packet));
 
-	CRIT_HANDLE(sendto(sd, &packet, sizeof(packet), 0, (struct sockaddr*)addr, sizeof(*addr)) == -1 , "sendto");
+	CRIT_HANDLE(sendto(sd, &packet, sizeof(packet), 0, (struct sockaddr*)addr, sizeof(*addr)) == -1 && errno!=ENETUNREACH, "sendto");
 
 	close(sd);
 	return 0;
