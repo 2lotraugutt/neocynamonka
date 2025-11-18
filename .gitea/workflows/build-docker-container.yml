@@ -1,0 +1,27 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ main, dev ]
+
+jobs:
+  build:
+    runs-on: alpine-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install build dependencies
+        run: |
+          apk add build-base ncurses-dev linux-headers flex-dev ncurse-static
+      - name: Build neocynamonka
+        run: |
+          make all -j all CFLAGS="-static -Ofast"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ncm static binary
+          path: ncm
+
+          
+
