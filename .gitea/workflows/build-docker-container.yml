@@ -9,12 +9,16 @@ jobs:
     runs-on: alpine-latest
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
       - name: Install build dependencies
         run: |
-          apk add build-base ncurses-dev linux-headers flex-dev ncurse-static
+          apk add build-base ncurses-dev linux-headers flex-dev ncurse-static git
+
+      - name: Clone repo
+        run: |
+          git clone ${{ gitea.server_url }}/${{ gitea.repository }} app
+          git checkout ${{ gitea.ref_name }}
+          cd app
+
       - name: Build neocynamonka
         run: |
           make all -j all CFLAGS="-static -Ofast"
