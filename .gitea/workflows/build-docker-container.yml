@@ -14,22 +14,21 @@ jobs:
 
     steps:
       - name: Install build dependencies
+        shell: ash
         run: |
           apk add build-base ncurses-dev linux-headers flex-dev ncurse-static git
 
       - name: Clone repo
+        shell: ash
         run: |
           git clone ${{ gitea.server_url }}/${{ gitea.repository }} app
           git checkout ${{ gitea.ref_name }}
           cd app
 
       - name: Build neocynamonka
+        shell: ash
         run: |
           make all -j all CFLAGS="-static -Ofast"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ncm static binary
-          path: ncm
 
           
 
